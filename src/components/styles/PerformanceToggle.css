@@ -1,7 +1,7 @@
 .performance-toggle {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  right: 22px;
+  bottom: 92px;
   z-index: 130;
   display: inline-flex;
   gap: 4px;
@@ -34,7 +34,13 @@
 
 @media only screen and (min-width: 900px) {
   .performance-toggle {
-    bottom: 26px;
+    bottom: 92px;
     right: 22px;
+  }
+}
+
+@media only screen and (max-width: 899px) {
+  .performance-toggle {
+    display: none;
   }
 }

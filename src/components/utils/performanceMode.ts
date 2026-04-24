@@ -44,6 +44,10 @@ const getAutoQuality = (): RenderQuality => {
 };
 
 export const resolveQuality = (mode: PerformanceMode): RenderQuality => {
+  if (typeof window !== "undefined" && window.innerWidth < 900) {
+    return getAutoQuality();
+  }
+
   if (mode === "quality") return "high";
   if (mode === "smooth") return "light";
   return getAutoQuality();
