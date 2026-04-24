@@ -68,6 +68,20 @@
   animation: loadingCircle2 5s linear infinite;
 }
 
+@media (prefers-reduced-motion: reduce), screen and (max-width: 1024px) {
+  .landing-circle1 {
+    filter: blur(38px);
+  }
+
+  .landing-circle2 {
+    filter: blur(34px);
+  }
+
+  .character-rim {
+    filter: blur(36px);
+  }
+}
+
 @keyframes loadingCircle2 {
   100% {
     transform: translate(calc(100% - 2px), -50%) rotate(360deg);

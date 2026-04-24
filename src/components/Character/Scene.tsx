@@ -23,6 +23,18 @@ const Scene = () => {
   useEffect(() => {
     if (canvasDiv.current) {
       const isMobile = window.innerWidth <= 1024;
+      const nav = navigator as Navigator & { deviceMemory?: number };
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const lowPower =
+        isMobile ||
+        reducedMotion ||
+        (nav.deviceMemory !== undefined && nav.deviceMemory <= 4) ||
+        navigator.hardwareConcurrency <= 6;
+
+      const targetFps = lowPower ? 30 : 45;
+      const frameInterval = 1000 / targetFps;
+      let lastRenderTime = 0;
+
       let rect = canvasDiv.current.getBoundingClientRect();
       let container = { width: rect.width, height: rect.height };
       const aspect = container.width / container.height;
@@ -30,12 +42,16 @@ const Scene = () => {
 
       const renderer = new THREE.WebGLRenderer({
         alpha: true,
-        antialias: !isMobile,
+        antialias: !lowPower,
+        powerPreference: "high-performance",
       });
       renderer.setSize(container.width, container.height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.1 : 1.35));
+      renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio, lowPower ? 1 : 1.25)
+      );
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1;
+      renderer.shadowMap.enabled = !lowPower;
       canvasDiv.current.appendChild(renderer.domElement);
 
       const camera = new THREE.PerspectiveCamera(14.5, aspect, 0.1, 1000);
@@ -53,7 +69,7 @@ const Scene = () => {
 
       const clock = new THREE.Clock();
 
-      const light = setLighting(scene);
+      const light = setLighting(scene, lowPower);
       let progress = setProgress((value) => setLoading(value));
       const { loadCharacter } = setCharacter(renderer, scene, camera);
 
@@ -118,17 +134,25 @@ const Scene = () => {
         });
       };
 
-      document.addEventListener("mousemove", onMouseMove, { passive: true });
+      if (!isMobile) {
+        document.addEventListener("mousemove", onMouseMove, { passive: true });
+      }
       if (landingDiv) {
         landingDiv.addEventListener("touchstart", onTouchStart, { passive: true });
         landingDiv.addEventListener("touchend", onTouchEnd);
       }
 
-      const animate = () => {
+      const animate = (time = 0) => {
         frameId = requestAnimationFrame(animate);
         if (!sceneActive) {
           return;
         }
+
+        if (time - lastRenderTime < frameInterval) {
+          return;
+        }
+
+        lastRenderTime = time;
 
         if (headBone) {
           handleHeadRotation(
@@ -148,7 +172,7 @@ const Scene = () => {
         renderer.render(scene, camera);
       };
 
-      animate();
+      animate(0);
 
       return () => {
         clearTimeout(debounce);
@@ -163,7 +187,9 @@ const Scene = () => {
           canvasDiv.current.removeChild(renderer.domElement);
         }
         if (landingDiv) {
-          document.removeEventListener("mousemove", onMouseMove);
+          if (!isMobile) {
+            document.removeEventListener("mousemove", onMouseMove);
+          }
           landingDiv.removeEventListener("touchstart", onTouchStart);
           landingDiv.removeEventListener("touchend", onTouchEnd);
           landingDiv.removeEventListener("touchmove", onTouchMove);

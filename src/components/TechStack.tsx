@@ -19,6 +19,7 @@ type OrbProps = {
   scale: number;
   material: THREE.MeshPhysicalMaterial;
   isActive: boolean;
+  quality: "high" | "balanced" | "light";
 };
 
 function Orb({
@@ -29,14 +30,22 @@ function Orb({
   scale,
   material,
   isActive,
+  quality,
 }: OrbProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const pointerWorld = useRef(new THREE.Vector3());
   const current = useRef(base.clone());
+  const accumulator = useRef(0);
 
   useFrame(({ clock, pointer, viewport }, delta) => {
     if (!meshRef.current) return;
     if (!isActive) return;
+
+    const updateStep = quality === "light" ? 1 / 30 : quality === "balanced" ? 1 / 45 : 1 / 60;
+    accumulator.current += delta;
+    if (accumulator.current < updateStep) return;
+    delta = accumulator.current;
+    accumulator.current = 0;
 
     const t = clock.elapsedTime;
     const drift = 0.85;
@@ -88,11 +97,11 @@ function Orb({
 
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
-  const [isLightMode, setIsLightMode] = useState(false);
+  const [quality, setQuality] = useState<"high" | "balanced" | "light">("high");
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
   const spheres = useMemo(() => {
-    const count = isLightMode ? 12 : 20;
+    const count = quality === "light" ? 10 : quality === "balanced" ? 14 : 20;
     return [...Array(count)].map(() => ({
       scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
       materialIndex: Math.floor(Math.random() * textures.length),
@@ -113,14 +122,26 @@ const TechStack = () => {
       ),
       phase: Math.random() * Math.PI * 2,
     }));
-  }, [isLightMode]);
+  }, [quality]);
 
   useEffect(() => {
     const setPerfMode = () => {
-      setIsLightMode(
-        window.innerWidth < 1400 ||
-          window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      );
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const nav = navigator as Navigator & { deviceMemory?: number };
+      const lowMemory = nav.deviceMemory !== undefined && nav.deviceMemory <= 4;
+      const lowCpu = navigator.hardwareConcurrency <= 6;
+
+      if (reducedMotion || window.innerWidth < 900 || lowMemory || lowCpu) {
+        setQuality("light");
+        return;
+      }
+
+      if (window.innerWidth < 1400) {
+        setQuality("balanced");
+        return;
+      }
+
+      setQuality("high");
     };
     setPerfMode();
 
@@ -162,10 +183,16 @@ const TechStack = () => {
       <h2>{portfolioData.techStack.heading}</h2>
 
       <Canvas
-        shadows={!isLightMode}
-        dpr={[1, isLightMode ? 1.25 : 1.6]}
+        shadows={quality === "high"}
+        dpr={[1, quality === "light" ? 1 : quality === "balanced" ? 1.2 : 1.4]}
         frameloop={isActive ? "always" : "demand"}
-        gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
+        gl={{
+          alpha: true,
+          stencil: false,
+          depth: false,
+          antialias: quality === "high",
+          powerPreference: "high-performance",
+        }}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
         onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
         className="tech-canvas"
@@ -176,8 +203,8 @@ const TechStack = () => {
           penumbra={1}
           angle={0.2}
           color="white"
-          castShadow
-          shadow-mapSize={[512, 512]}
+          castShadow={quality === "high"}
+          shadow-mapSize={quality === "high" ? [512, 512] : [256, 256]}
         />
         <directionalLight position={[0, 5, -4]} intensity={2} />
         {spheres.map((props, i) => (
@@ -190,6 +217,7 @@ const TechStack = () => {
             scale={props.scale}
             material={materials[props.materialIndex]}
             isActive={isActive}
+            quality={quality}
           />
         ))}
         <Environment
@@ -197,7 +225,7 @@ const TechStack = () => {
           environmentIntensity={0.5}
           environmentRotation={[0, 4, 2]}
         />
-        {!isLightMode && (
+        {quality === "high" && (
           <EffectComposer enableNormalPass={false}>
             <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
           </EffectComposer>
