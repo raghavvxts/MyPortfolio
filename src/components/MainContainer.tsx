@@ -15,6 +15,7 @@ import Navbar from "./Navbar";
 import SocialIcons from "./SocialIcons";
 import WhatIDo from "./WhatIDo";
 import Work from "./Work";
+import PerformanceToggle from "./PerformanceToggle";
 import setSplitText from "./utils/splitText";
 
 const TechStack = lazy(() => import("./TechStack"));
@@ -70,6 +71,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       <Cursor />
       <Navbar />
       <SocialIcons />
+      <PerformanceToggle />
       {isDesktopView && children}
       <div id="smooth-wrapper">
         <div id="smooth-content">

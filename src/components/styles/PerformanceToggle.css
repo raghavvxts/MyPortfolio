@@ -1,0 +1,40 @@
+.performance-toggle {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 130;
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(10, 14, 23, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+}
+
+.performance-toggle-btn {
+  border: 0;
+  background: transparent;
+  color: #b7becf;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.performance-toggle-btn.active {
+  color: #0a0e17;
+  background: #5eead4;
+  box-shadow: 0 0 12px rgba(94, 234, 212, 0.35);
+}
+
+@media only screen and (min-width: 900px) {
+  .performance-toggle {
+    bottom: 26px;
+    right: 22px;
+  }
+}

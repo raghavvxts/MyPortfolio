@@ -4,6 +4,10 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { EffectComposer, N8AO } from "@react-three/postprocessing";
 import { portfolioData } from "../data/portfolioData";
+import {
+  getPerformanceMode,
+  resolveQuality,
+} from "./utils/performanceMode";
 
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = portfolioData.techStack.imageUrls;
@@ -97,7 +101,9 @@ function Orb({
 
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
-  const [quality, setQuality] = useState<"high" | "balanced" | "light">("high");
+  const [quality, setQuality] = useState<"high" | "balanced" | "light">(
+    resolveQuality(getPerformanceMode())
+  );
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
   const spheres = useMemo(() => {
@@ -126,23 +132,9 @@ const TechStack = () => {
 
   useEffect(() => {
     const setPerfMode = () => {
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const nav = navigator as Navigator & { deviceMemory?: number };
-      const lowMemory = nav.deviceMemory !== undefined && nav.deviceMemory <= 4;
-      const lowCpu = navigator.hardwareConcurrency <= 6;
-
-      if (reducedMotion || window.innerWidth < 900 || lowMemory || lowCpu) {
-        setQuality("light");
-        return;
-      }
-
-      if (window.innerWidth < 1400) {
-        setQuality("balanced");
-        return;
-      }
-
-      setQuality("high");
+      setQuality(resolveQuality(getPerformanceMode()));
     };
+
     setPerfMode();
 
     const observer = new IntersectionObserver(
@@ -157,10 +149,18 @@ const TechStack = () => {
     }
 
     window.addEventListener("resize", setPerfMode);
+    window.addEventListener(
+      "rv-performance-mode-change",
+      setPerfMode as EventListener
+    );
 
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", setPerfMode);
+      window.removeEventListener(
+        "rv-performance-mode-change",
+        setPerfMode as EventListener
+      );
     };
   }, []);
   const materials = useMemo(() => {

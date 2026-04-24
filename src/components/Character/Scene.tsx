@@ -12,6 +12,10 @@ import {
 } from "./utils/mouseUtils";
 import setAnimations from "./utils/animationUtils";
 import { setProgress } from "../Loading";
+import {
+  getPerformanceMode,
+  isCharacterLowPower,
+} from "../utils/performanceMode";
 
 const Scene = () => {
   const canvasDiv = useRef<HTMLDivElement | null>(null);
@@ -23,16 +27,12 @@ const Scene = () => {
   useEffect(() => {
     if (canvasDiv.current) {
       const isMobile = window.innerWidth <= 1024;
-      const nav = navigator as Navigator & { deviceMemory?: number };
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const lowPower =
-        isMobile ||
-        reducedMotion ||
-        (nav.deviceMemory !== undefined && nav.deviceMemory <= 4) ||
-        navigator.hardwareConcurrency <= 6;
-
-      const targetFps = lowPower ? 30 : 45;
-      const frameInterval = 1000 / targetFps;
+      const lowPowerRef = {
+        current: isCharacterLowPower(getPerformanceMode()) || isMobile,
+      };
+      const frameIntervalRef = {
+        current: lowPowerRef.current ? 1000 / 30 : 1000 / 45,
+      };
       let lastRenderTime = 0;
 
       let rect = canvasDiv.current.getBoundingClientRect();
@@ -42,16 +42,16 @@ const Scene = () => {
 
       const renderer = new THREE.WebGLRenderer({
         alpha: true,
-        antialias: !lowPower,
+        antialias: !lowPowerRef.current,
         powerPreference: "high-performance",
       });
       renderer.setSize(container.width, container.height);
       renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, lowPower ? 1 : 1.25)
+        Math.min(window.devicePixelRatio, lowPowerRef.current ? 1 : 1.25)
       );
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1;
-      renderer.shadowMap.enabled = !lowPower;
+      renderer.shadowMap.enabled = !lowPowerRef.current;
       canvasDiv.current.appendChild(renderer.domElement);
 
       const camera = new THREE.PerspectiveCamera(14.5, aspect, 0.1, 1000);
@@ -69,7 +69,7 @@ const Scene = () => {
 
       const clock = new THREE.Clock();
 
-      const light = setLighting(scene, lowPower);
+      const light = setLighting(scene, lowPowerRef.current);
       let progress = setProgress((value) => setLoading(value));
       const { loadCharacter } = setCharacter(renderer, scene, camera);
 
@@ -100,6 +100,17 @@ const Scene = () => {
         }
       };
 
+      const applyPerformanceMode = () => {
+        lowPowerRef.current = isCharacterLowPower(getPerformanceMode()) || isMobile;
+        frameIntervalRef.current = lowPowerRef.current ? 1000 / 30 : 1000 / 45;
+        renderer.setPixelRatio(
+          Math.min(window.devicePixelRatio, lowPowerRef.current ? 1 : 1.25)
+        );
+        renderer.shadowMap.enabled = !lowPowerRef.current;
+      };
+
+      applyPerformanceMode();
+
       const updateSceneActivity = () => {
         const scrollY = window.scrollY || document.documentElement.scrollTop;
         const activeLimit = window.innerHeight * (isMobile ? 1.15 : 1.8);
@@ -109,6 +120,10 @@ const Scene = () => {
       window.addEventListener("resize", onResize);
       window.addEventListener("scroll", updateSceneActivity, { passive: true });
       document.addEventListener("visibilitychange", updateSceneActivity);
+      window.addEventListener(
+        "rv-performance-mode-change",
+        applyPerformanceMode as EventListener
+      );
       updateSceneActivity();
       const landingDiv = document.getElementById("landingDiv");
 
@@ -148,7 +163,7 @@ const Scene = () => {
           return;
         }
 
-        if (time - lastRenderTime < frameInterval) {
+        if (time - lastRenderTime < frameIntervalRef.current) {
           return;
         }
 
@@ -183,6 +198,10 @@ const Scene = () => {
         window.removeEventListener("resize", onResize);
         window.removeEventListener("scroll", updateSceneActivity);
         document.removeEventListener("visibilitychange", updateSceneActivity);
+        window.removeEventListener(
+          "rv-performance-mode-change",
+          applyPerformanceMode as EventListener
+        );
         if (canvasDiv.current) {
           canvasDiv.current.removeChild(renderer.domElement);
         }
