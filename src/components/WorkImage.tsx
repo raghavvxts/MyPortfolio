@@ -46,6 +46,7 @@ const WorkImage = (props: Props) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsVideo(false)}
         target="_blank"
+        rel="noreferrer"
         data-cursor={"disable"}
       >
         {props.link && (
@@ -60,7 +61,7 @@ const WorkImage = (props: Props) => {
           decoding="async"
           onError={(e) => {
             const target = e.currentTarget;
-            if (target.src !== fallbackImage) {
+            if (!target.src.endsWith("/images/placeholder.webp")) {
               target.src = fallbackImage;
             }
           }}

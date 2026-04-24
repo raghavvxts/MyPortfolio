@@ -7,6 +7,7 @@ import { portfolioData } from "../data/portfolioData";
 
 const Loading = ({ percent }: { percent: number }) => {
   const { profile } = portfolioData;
+  const ironManLine = ["GENIUS,", "BILLIONAIRE,", "PHILANTHROPIST"];
   const { setIsLoading } = useLoading();
   const [loaded, setLoaded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -53,11 +54,16 @@ const Loading = ({ percent }: { percent: number }) => {
         <div className={`loaderGame ${clicked && "loader-out"}`}>
           <div className="loaderGame-container">
             <div className="loaderGame-in">
-              {[...Array(27)].map((_, index) => (
-                <div className="loaderGame-line" key={index}></div>
+              {[...Array(4)].map((_, row) => (
+                <div className="loaderGame-row" key={row}>
+                  {ironManLine.map((word) => (
+                    <span className="loaderGame-word" key={`${row}-${word}`}>
+                      {word}
+                    </span>
+                  ))}
+                </div>
               ))}
             </div>
-            <div className="loaderGame-ball"></div>
           </div>
         </div>
       </div>

@@ -6,8 +6,8 @@ import { portfolioData } from "../data/portfolioData";
 
 const projects = portfolioData.projects.filter(
   (project) =>
-    Boolean(project.title?.trim()) ||
-    Boolean(project.image?.trim()) ||
+    Boolean(project.title?.trim()) &&
+    Boolean(project.image?.trim()) &&
     Boolean(project.tools?.trim())
 );
 
@@ -86,6 +86,17 @@ const Work = () => {
                         <div className="carousel-tools">
                           <span className="tools-label">Tools & Features</span>
                           <p>{project.tools}</p>
+                          {project.demoLink && (
+                            <a
+                              className="project-live-link"
+                              href={project.demoLink}
+                              target="_blank"
+                              rel="noreferrer"
+                              data-cursor="disable"
+                            >
+                              Live Demo: {project.demoLink}
+                            </a>
+                          )}
                           {project.highlights && (
                             <ul>
                               {project.highlights.map((point) => (

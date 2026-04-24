@@ -250,12 +250,12 @@
 }
 
 .loaderGame-container {
-  width: 200px;
+  width: 320px;
   transition: 0.3s;
-  height: 100px;
+  height: 86px;
   overflow: hidden;
   position: relative;
-  transform: scale(0.4);
+  transform: scale(0.42);
   transform-origin: top right;
 }
 
@@ -264,11 +264,11 @@
 }
 
 .loaderGame-in {
-  width: 1200px;
+  width: max-content;
   position: absolute;
   overflow: hidden;
   left: 0;
-  animation: loaderGame 7s linear infinite;
+  animation: loaderGame 5s linear infinite;
 }
 
 @keyframes loaderGame {
@@ -277,37 +277,34 @@
   }
 
   100% {
-    transform: translateX(-300px);
+    transform: translateX(-310px);
   }
 }
 
-.loaderGame-line {
-  float: left;
-  margin: 0px 20px;
-  margin-bottom: 40px;
-  position: relative;
-  width: 10px;
-  height: 60px;
-  background-color: #000;
-  display: block;
+.loaderGame-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
-.loaderGame-line:nth-child(2n) {
-  margin-top: 40px;
-  margin-bottom: 0px;
+.loaderGame-word {
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 1.8px;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 600;
+  color: #001319;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(45, 212, 191, 0.55);
 }
 
-.loaderGame-ball {
-  position: absolute;
-  left: 20%;
-  top: 0%;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #2dd4bf;
-  animation: ball25 7s infinite;
-  transform: translateY(10px);
-  animation-timing-function: cubic-bezier(0.3, 1.18, 0.63, 1.28);
+.loaderGame-word::after {
+  content: "";
+  margin-left: 12px;
+  color: #14b8a6;
+  opacity: 0.8;
 }
 
 .loading-marquee {
@@ -337,40 +334,6 @@
   border-radius: 50px;
   left: 0px;
   transform: translate(-50%, -50%);
-}
-
-@keyframes ball25 {
-  0% {
-    transform: translateY(70px);
-  }
-
-  15% {
-    transform: translateY(10px);
-  }
-
-  30% {
-    transform: translateY(70px);
-  }
-
-  45% {
-    transform: translateY(10px);
-  }
-
-  67% {
-    transform: translateY(70px);
-  }
-
-  80% {
-    transform: translateY(10px);
-  }
-
-  90% {
-    transform: translateY(70px);
-  }
-
-  100% {
-    transform: translateY(70px);
-  }
 }
 
 @media only screen and (min-width: 1400px) {

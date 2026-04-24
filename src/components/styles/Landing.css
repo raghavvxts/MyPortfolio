@@ -233,15 +233,20 @@
   top: 0;
 }
 
+.landing-info-secondary {
+  color: #eae5ec;
+  margin-top: -8px;
+}
+
 h2.landing-info-h2 {
   color: #14b8a6;
   font-size: 42px;
-  width: 120%;
+  width: 100%;
   margin: 0;
   font-family: "Geist", sans-serif;
   font-weight: 600;
   position: relative;
-  margin-left: -5px;
+  margin-left: 0;
 }
 
 .landing-h2-2 {
@@ -335,6 +340,10 @@ h2.landing-info-h2 {
     margin-left: 0;
     font-size: 34px;
     line-height: 38px;
+  }
+
+  .landing-info-secondary {
+    margin-top: -3px;
   }
 
   .landing-info p {

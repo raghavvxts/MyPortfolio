@@ -18,14 +18,8 @@ const Landing = ({ children }: PropsWithChildren) => {
           </div>
           <div className="landing-info">
             <h3>{profile.headlineTop}</h3>
-            <h2 className="landing-info-h2">
-              <div className="landing-h2-1">{profile.headlineWords[0]}</div>
-              <div className="landing-h2-2">{profile.headlineWords[1]}</div>
-            </h2>
-            <h2>
-              <div className="landing-h2-info">{profile.headlineWords[1]}</div>
-              <div className="landing-h2-info-1">{profile.headlineWords[0]}</div>
-            </h2>
+            <h2 className="landing-info-h2">{profile.headlineWords[0]}</h2>
+            <h2 className="landing-info-secondary">{profile.headlineWords[1]}</h2>
             <p>{profile.heroTagline}</p>
           </div>
         </div>

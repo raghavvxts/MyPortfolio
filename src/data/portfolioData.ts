@@ -11,6 +11,7 @@ export type ProjectItem = {
   tools: string;
   image: string;
   link: string;
+  demoLink?: string;
   highlights?: string[];
 };
 
@@ -139,6 +140,7 @@ export const portfolioData = {
       tools: "Flask, NLP, Authentication, Resume Processing",
       image: "/images/resume-analyzer-ui.png",
       link: "https://github.com/raghavvxts",
+      demoLink: "https://aianalysis-resume.vercel.app",
       highlights: [
         "Developed an AI-powered web app to analyze resumes and provide personalized improvement suggestions",
         "Implemented NLP-based keyword extraction and job matching against job descriptions",

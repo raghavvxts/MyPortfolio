@@ -1,12 +1,18 @@
 import * as THREE from "three";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function setCharTimeline(
   character: THREE.Object3D<THREE.Object3DEventMap> | null,
   camera: THREE.PerspectiveCamera
 ) {
+  ScrollTrigger.getById("char-landing")?.kill();
+  ScrollTrigger.getById("char-about")?.kill();
+  ScrollTrigger.getById("char-what")?.kill();
+
   const tl1 = gsap.timeline({
     scrollTrigger: {
+      id: "char-landing",
       trigger: ".landing-section",
       start: "top top",
       end: "bottom top",
@@ -16,6 +22,7 @@ export function setCharTimeline(
   });
   const tl2 = gsap.timeline({
     scrollTrigger: {
+      id: "char-about",
       trigger: ".about-section",
       start: "center 55%",
       end: "bottom top",
@@ -25,6 +32,7 @@ export function setCharTimeline(
   });
   const tl3 = gsap.timeline({
     scrollTrigger: {
+      id: "char-what",
       trigger: ".whatIDO",
       start: "top top",
       end: "bottom top",
@@ -124,6 +132,7 @@ export function setCharTimeline(
     if (character) {
       const tM2 = gsap.timeline({
         scrollTrigger: {
+          id: "char-what-mobile",
           trigger: ".what-box-in",
           start: "top 70%",
           end: "bottom top",
@@ -135,12 +144,22 @@ export function setCharTimeline(
 }
 
 export function setAllTimeline() {
+  ScrollTrigger.getById("career-timeline")?.kill();
+
+  const careerSection = document.querySelector(".career-section") as HTMLElement | null;
+  const mobile = window.innerWidth <= 900;
+  const travel = Math.max(
+    careerSection?.offsetHeight ?? 0,
+    window.innerHeight * (mobile ? 1.85 : 1.45)
+  );
+
   const careerTimeline = gsap.timeline({
     scrollTrigger: {
+      id: "career-timeline",
       trigger: ".career-section",
       start: "top 30%",
-      end: "100% center",
-      scrub: true,
+      end: `+=${travel}`,
+      scrub: 1.1,
       invalidateOnRefresh: true,
     },
   });

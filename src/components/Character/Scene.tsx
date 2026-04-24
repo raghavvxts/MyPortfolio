@@ -33,7 +33,7 @@ const Scene = () => {
         antialias: !isMobile,
       });
       renderer.setSize(container.width, container.height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.6));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.1 : 1.35));
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1;
       canvasDiv.current.appendChild(renderer.domElement);
@@ -49,6 +49,7 @@ const Scene = () => {
       let mixer: THREE.AnimationMixer;
       let removeHoverEffects: (() => void) | undefined;
       let frameId = 0;
+      let sceneActive = true;
 
       const clock = new THREE.Clock();
 
@@ -83,7 +84,16 @@ const Scene = () => {
         }
       };
 
+      const updateSceneActivity = () => {
+        const scrollY = window.scrollY || document.documentElement.scrollTop;
+        const activeLimit = window.innerHeight * (isMobile ? 1.15 : 1.8);
+        sceneActive = !document.hidden && scrollY < activeLimit;
+      };
+
       window.addEventListener("resize", onResize);
+      window.addEventListener("scroll", updateSceneActivity, { passive: true });
+      document.addEventListener("visibilitychange", updateSceneActivity);
+      updateSceneActivity();
       const landingDiv = document.getElementById("landingDiv");
 
       let mouse = { x: 0, y: 0 },
@@ -116,6 +126,10 @@ const Scene = () => {
 
       const animate = () => {
         frameId = requestAnimationFrame(animate);
+        if (!sceneActive) {
+          return;
+        }
+
         if (headBone) {
           handleHeadRotation(
             headBone,
@@ -143,6 +157,8 @@ const Scene = () => {
         scene.clear();
         renderer.dispose();
         window.removeEventListener("resize", onResize);
+        window.removeEventListener("scroll", updateSceneActivity);
+        document.removeEventListener("visibilitychange", updateSceneActivity);
         if (canvasDiv.current) {
           canvasDiv.current.removeChild(renderer.domElement);
         }

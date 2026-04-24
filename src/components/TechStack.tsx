@@ -15,6 +15,7 @@ type OrbProps = {
   base: THREE.Vector3;
   velocity: THREE.Vector3;
   phase: number;
+  clusterPoint: THREE.Vector3;
   scale: number;
   material: THREE.MeshPhysicalMaterial;
   isActive: boolean;
@@ -24,6 +25,7 @@ function Orb({
   base,
   velocity,
   phase,
+  clusterPoint,
   scale,
   material,
   isActive,
@@ -51,6 +53,12 @@ function Orb({
     );
 
     const target = base.clone().add(wave);
+
+    // Periodically pull icons toward a compact cluster, then release them back.
+    const pulse = (Math.sin(t * 0.42 + phase * 0.2) + 1) / 2;
+    const clusterStrength = THREE.MathUtils.smoothstep(pulse, 0.68, 0.98);
+    target.lerp(clusterPoint, clusterStrength);
+
     const repel = target.clone().sub(pointerWorld.current);
     const distance = Math.max(repel.length(), 0.0001);
 
@@ -92,6 +100,11 @@ const TechStack = () => {
         THREE.MathUtils.randFloatSpread(14),
         THREE.MathUtils.randFloatSpread(8),
         THREE.MathUtils.randFloatSpread(8)
+      ),
+      clusterPoint: new THREE.Vector3(
+        THREE.MathUtils.randFloatSpread(2.2),
+        THREE.MathUtils.randFloatSpread(1.6),
+        THREE.MathUtils.randFloatSpread(1.4)
       ),
       velocity: new THREE.Vector3(
         0.4 + Math.random() * 0.8,
@@ -173,6 +186,7 @@ const TechStack = () => {
             base={props.base}
             velocity={props.velocity}
             phase={props.phase}
+            clusterPoint={props.clusterPoint}
             scale={props.scale}
             material={materials[props.materialIndex]}
             isActive={isActive}
