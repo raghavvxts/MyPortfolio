@@ -26,6 +26,15 @@
   margin-bottom: 90px;
 }
 
+.career-intro {
+  text-align: center;
+  margin: -45px auto 60px;
+  color: #adacac;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 0.4px;
+}
+
 .career-section h2>span {
   font-family: "Geist", sans-serif;
   font-weight: 300;
@@ -166,6 +175,11 @@
     font-size: 14px;
   }
 
+  .career-intro {
+    font-size: 15px;
+    margin: -45px auto 50px;
+  }
+
   .career-info-in {
     width: 45%;
     gap: 20px;
@@ -218,6 +232,12 @@
     font-size: 45px;
     line-height: 45px;
     margin-top: 0px;
+  }
+
+  .career-intro {
+    text-align: left;
+    margin: -30px 0 40px;
+    font-size: 13px;
   }
 
   .career-info-in {

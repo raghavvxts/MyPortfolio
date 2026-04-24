@@ -10,25 +10,13 @@ import {
   CylinderCollider,
   RapierRigidBody,
 } from "@react-three/rapier";
+import { portfolioData } from "../data/portfolioData";
 
 const textureLoader = new THREE.TextureLoader();
-const imageUrls = [
-  "/images/react2.webp",
-  "/images/next2.webp",
-  "/images/node2.webp",
-  "/images/express.webp",
-  "/images/mongo.webp",
-  "/images/mysql.webp",
-  "/images/typescript.webp",
-  "/images/javascript.webp",
-];
+const imageUrls = portfolioData.techStack.imageUrls;
 const textures = imageUrls.map((url) => textureLoader.load(url));
 
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
-
-const spheres = [...Array(30)].map(() => ({
-  scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
-}));
 
 type SphereProps = {
   vec?: THREE.Vector3;
@@ -126,8 +114,24 @@ function Pointer({ vec = new THREE.Vector3(), isActive }: PointerProps) {
 
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
+  const [isLightMode, setIsLightMode] = useState(false);
+
+  const spheres = useMemo(() => {
+    const count = isLightMode ? 12 : 20;
+    return [...Array(count)].map(() => ({
+      scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
+    }));
+  }, [isLightMode]);
 
   useEffect(() => {
+    const setPerfMode = () => {
+      setIsLightMode(
+        window.innerWidth < 1400 ||
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      );
+    };
+    setPerfMode();
+
     const handleScroll = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const threshold = document
@@ -135,20 +139,13 @@ const TechStack = () => {
         .getBoundingClientRect().top;
       setIsActive(scrollY > threshold);
     };
-    document.querySelectorAll(".header a").forEach((elem) => {
-      const element = elem as HTMLAnchorElement;
-      element.addEventListener("click", () => {
-        const interval = setInterval(() => {
-          handleScroll();
-        }, 10);
-        setTimeout(() => {
-          clearInterval(interval);
-        }, 1000);
-      });
-    });
+
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", setPerfMode);
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", setPerfMode);
     };
   }, []);
   const materials = useMemo(() => {
@@ -168,10 +165,12 @@ const TechStack = () => {
 
   return (
     <div className="techstack">
-      <h2> My Techstack</h2>
+      <h2>{portfolioData.techStack.heading}</h2>
 
       <Canvas
-        shadows
+        shadows={!isLightMode}
+        dpr={[1, isLightMode ? 1.25 : 1.6]}
+        frameloop={isActive ? "always" : "demand"}
         gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
         onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
@@ -203,9 +202,11 @@ const TechStack = () => {
           environmentIntensity={0.5}
           environmentRotation={[0, 4, 2]}
         />
-        <EffectComposer enableNormalPass={false}>
-          <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
-        </EffectComposer>
+        {!isLightMode && (
+          <EffectComposer enableNormalPass={false}>
+            <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
   );

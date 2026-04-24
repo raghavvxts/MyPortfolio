@@ -7,9 +7,19 @@ import {
 import "./styles/SocialIcons.css";
 import { TbNotes } from "react-icons/tb";
 import { useEffect } from "react";
+import { portfolioData } from "../data/portfolioData";
 import HoverLinks from "./HoverLinks";
 
 const SocialIcons = () => {
+  const { links } = portfolioData;
+
+  const socialLinks = [
+    { href: links.github, icon: <FaGithub />, label: "GitHub" },
+    { href: links.linkedin, icon: <FaLinkedinIn />, label: "LinkedIn" },
+    { href: links.youtube, icon: <FaYoutube />, label: "YouTube" },
+    { href: links.instagram, icon: <FaInstagram />, label: "Instagram" },
+  ].filter((item) => Boolean(item.href));
+
   useEffect(() => {
     const social = document.getElementById("social") as HTMLElement;
 
@@ -59,54 +69,27 @@ const SocialIcons = () => {
   return (
     <div className="icons-section">
       <div className="social-icons" data-cursor="icons" id="social">
-        <span>
-          <a
-            href="https://github.com/akashrmalhotra"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <FaGithub />
-          </a>
-        </span>
-        <span>
-          <a
-            href="https://www.linkedin.com/in/akashrmalhotra/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <FaLinkedinIn />
-          </a>
-        </span>
-        <span>
-          <a
-            href="https://www.youtube.com/@Leftbraincoder"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <FaYoutube />
-          </a>
-        </span>
-        <span>
-          <a
-            href="https://www.instagram.com/leftbraincoder/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <FaInstagram />
-          </a>
-        </span>
+        {socialLinks.map((item) => (
+          <span key={item.label}>
+            <a href={item.href} target="_blank" rel="noreferrer">
+              {item.icon}
+            </a>
+          </span>
+        ))}
       </div>
-      <a
-        className="resume-button"
-        href="/Akash_Malhotra.pdf"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <HoverLinks text="RESUME" />
-        <span>
-          <TbNotes />
-        </span>
-      </a>
+      {links.resume && (
+        <a
+          className="resume-button"
+          href={encodeURI(links.resume)}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <HoverLinks text="RESUME" />
+          <span>
+            <TbNotes />
+          </span>
+        </a>
+      )}
     </div>
   );
 };

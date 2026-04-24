@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import "./styles/Cursor.css";
-import gsap from "gsap";
 
 const Cursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -18,8 +17,7 @@ const Cursor = () => {
         const delay = 6;
         cursorPos.x += (mousePos.x - cursorPos.x) / delay;
         cursorPos.y += (mousePos.y - cursorPos.y) / delay;
-        gsap.to(cursor, { x: cursorPos.x, y: cursorPos.y, duration: 0.1 });
-        // cursor.style.transform = `translate(${cursorPos.x}px, ${cursorPos.y}px)`;
+        cursor.style.transform = `translate3d(${cursorPos.x}px, ${cursorPos.y}px, 0)`;
       }
       requestAnimationFrame(loop);
     });
@@ -32,8 +30,7 @@ const Cursor = () => {
         if (element.dataset.cursor === "icons") {
           cursor.classList.add("cursor-icons");
 
-          gsap.to(cursor, { x: rect.left, y: rect.top, duration: 0.1 });
-          //   cursor.style.transform = `translate(${rect.left}px,${rect.top}px)`;
+          cursor.style.transform = `translate3d(${rect.left}px, ${rect.top}px, 0)`;
           cursor.style.setProperty("--cursorH", `${rect.height}px`);
           hover = true;
         }

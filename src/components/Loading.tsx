@@ -3,8 +3,10 @@ import "./styles/Loading.css";
 import { useLoading } from "../context/LoadingProvider";
 
 import Marquee from "react-fast-marquee";
+import { portfolioData } from "../data/portfolioData";
 
 const Loading = ({ percent }: { percent: number }) => {
+  const { profile } = portfolioData;
   const { setIsLoading } = useLoading();
   const [loaded, setLoaded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -46,7 +48,7 @@ const Loading = ({ percent }: { percent: number }) => {
     <>
       <div className="loading-header">
         <a href="/#" className="loader-title" data-cursor="disable">
-          AM
+          {profile.initials}
         </a>
         <div className={`loaderGame ${clicked && "loader-out"}`}>
           <div className="loaderGame-container">
@@ -62,8 +64,12 @@ const Loading = ({ percent }: { percent: number }) => {
       <div className="loading-screen">
         <div className="loading-marquee">
           <Marquee>
-            <span> Full Stack Developer</span> <span>Software Engineer</span>
-            <span> Full Stack Developer</span> <span>Software Engineer</span>
+            {profile.loaderRoles.map((role) => (
+              <span key={`one-${role}`}> {role}</span>
+            ))}
+            {profile.loaderRoles.map((role) => (
+              <span key={`two-${role}`}> {role}</span>
+            ))}
           </Marquee>
         </div>
         <div
