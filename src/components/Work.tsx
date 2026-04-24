@@ -4,7 +4,12 @@ import WorkImage from "./WorkImage";
 import { MdArrowBack, MdArrowForward } from "react-icons/md";
 import { portfolioData } from "../data/portfolioData";
 
-const projects = portfolioData.projects;
+const projects = portfolioData.projects.filter(
+  (project) =>
+    Boolean(project.title?.trim()) ||
+    Boolean(project.image?.trim()) ||
+    Boolean(project.tools?.trim())
+);
 
 const Work = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,6 +39,10 @@ const Work = () => {
         <h2>
           My <span>Work</span>
         </h2>
+
+        {projects.length === 0 && (
+          <p className="work-empty">Projects will appear here once added in portfolio data.</p>
+        )}
 
         <div className="carousel-wrapper">
           {/* Navigation Arrows */}

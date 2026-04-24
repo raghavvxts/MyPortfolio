@@ -115,11 +115,13 @@ function Pointer({ vec = new THREE.Vector3(), isActive }: PointerProps) {
 const TechStack = () => {
   const [isActive, setIsActive] = useState(false);
   const [isLightMode, setIsLightMode] = useState(false);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
 
   const spheres = useMemo(() => {
     const count = isLightMode ? 12 : 20;
     return [...Array(count)].map(() => ({
       scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
+      materialIndex: Math.floor(Math.random() * textures.length),
     }));
   }, [isLightMode]);
 
@@ -132,19 +134,21 @@ const TechStack = () => {
     };
     setPerfMode();
 
-    const handleScroll = () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const threshold = document
-        .getElementById("work")!
-        .getBoundingClientRect().top;
-      setIsActive(scrollY > threshold);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setIsActive(entries.some((entry) => entry.isIntersecting));
+      },
+      { threshold: 0.12 }
+    );
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
     window.addEventListener("resize", setPerfMode);
+
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
       window.removeEventListener("resize", setPerfMode);
     };
   }, []);
@@ -164,7 +168,7 @@ const TechStack = () => {
   }, []);
 
   return (
-    <div className="techstack">
+    <div className="techstack" ref={sectionRef}>
       <h2>{portfolioData.techStack.heading}</h2>
 
       <Canvas
@@ -191,8 +195,8 @@ const TechStack = () => {
           {spheres.map((props, i) => (
             <SphereGeo
               key={i}
-              {...props}
-              material={materials[Math.floor(Math.random() * materials.length)]}
+              scale={props.scale}
+              material={materials[props.materialIndex]}
               isActive={isActive}
             />
           ))}

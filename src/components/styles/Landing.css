@@ -294,6 +294,99 @@ h2.landing-info-h2 {
   }
 }
 
+@media screen and (max-width: 900px) {
+  .landing-intro {
+    top: 11%;
+  }
+
+  .landing-intro h2 {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .landing-intro h1 {
+    font-size: 28px;
+    line-height: 30px;
+    letter-spacing: 1px;
+  }
+
+  .landing-info {
+    width: 100%;
+    right: 0;
+    transform: none;
+    bottom: 24px;
+  }
+
+  .landing-info h3 {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .landing-info h2 {
+    margin-top: -10px;
+    margin-left: 0;
+    font-size: 28px;
+    line-height: 32px;
+    letter-spacing: 1px;
+  }
+
+  h2.landing-info-h2 {
+    width: 100%;
+    margin-left: 0;
+    font-size: 34px;
+    line-height: 38px;
+  }
+
+  .landing-info p {
+    font-size: 14px;
+    max-width: 30ch;
+  }
+
+  .character-model {
+    height: 72vh;
+    bottom: 30px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .landing-section {
+    min-height: var(--vh);
+  }
+
+  .landing-intro {
+    top: 13%;
+  }
+
+  .landing-info {
+    bottom: 18px;
+  }
+
+  .landing-info h3 {
+    font-size: 15px;
+  }
+
+  .landing-info h2 {
+    font-size: 23px;
+    line-height: 27px;
+  }
+
+  h2.landing-info-h2 {
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  .landing-info p {
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 32ch;
+  }
+
+  .character-model {
+    height: 68vh;
+    bottom: 20px;
+  }
+}
+
 @media screen and (min-width: 768px) {
   .character-model {
     height: 80vh;

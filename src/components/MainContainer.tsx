@@ -1,4 +1,11 @@
-import { lazy, PropsWithChildren, Suspense, useEffect, useState } from "react";
+import {
+  lazy,
+  PropsWithChildren,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import About from "./About";
 import Career from "./Career";
 import Contact from "./Contact";
@@ -16,18 +23,47 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   const [isDesktopView, setIsDesktopView] = useState<boolean>(
     window.innerWidth > 1024
   );
+  const [shouldLoadTechStack, setShouldLoadTechStack] = useState(false);
+  const techStackTriggerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    let resizeFrame = 0;
     const resizeHandler = () => {
-      setSplitText();
-      setIsDesktopView(window.innerWidth > 1024);
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        setSplitText();
+        setIsDesktopView(window.innerWidth > 1024);
+      });
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
     return () => {
+      cancelAnimationFrame(resizeFrame);
       window.removeEventListener("resize", resizeHandler);
     };
-  }, [isDesktopView]);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktopView || shouldLoadTechStack) return;
+    const triggerEl = techStackTriggerRef.current;
+    if (!triggerEl) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoadTechStack(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "450px 0px" }
+    );
+
+    observer.observe(triggerEl);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isDesktopView, shouldLoadTechStack]);
 
   return (
     <div className="container-main">
@@ -43,7 +79,8 @@ const MainContainer = ({ children }: PropsWithChildren) => {
             <WhatIDo />
             <Career />
             <Work />
-            {isDesktopView && (
+            <div ref={techStackTriggerRef} aria-hidden="true" />
+            {isDesktopView && shouldLoadTechStack && (
               <Suspense fallback={<div>Loading....</div>}>
                 <TechStack />
               </Suspense>

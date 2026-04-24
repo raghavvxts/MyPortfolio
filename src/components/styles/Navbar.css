@@ -10,6 +10,7 @@
   left: 50%;
   transform: translateX(-50%);
   top: 0;
+  padding-top: max(20px, env(safe-area-inset-top));
   z-index: 9999;
 }
 .header ul {
@@ -44,6 +45,20 @@
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.2px;
+}
+@media only screen and (max-width: 499px) {
+  .header {
+    align-items: center;
+  }
+
+  .header ul {
+    flex-direction: row;
+    align-items: center;
+    column-gap: 18px;
+    row-gap: 0;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
 }
 @media only screen and (min-width: 500px) {
   .header {

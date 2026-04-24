@@ -21,6 +21,13 @@
   margin: auto;
 }
 
+.work-empty {
+  margin: -20px 0 28px;
+  color: #a7b0c2;
+  font-size: 15px;
+  font-weight: 300;
+}
+
 /* ── Carousel ── */
 .carousel-wrapper {
   position: relative;

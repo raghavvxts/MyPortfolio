@@ -7,54 +7,73 @@ import "./styles/Navbar.css";
 import { portfolioData } from "../data/portfolioData";
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
-export let smoother: ScrollSmoother;
+export let smoother: ScrollSmoother | null = null;
 
 const Navbar = () => {
-  const { links, profile } = portfolioData;
+  const { profile } = portfolioData;
   useEffect(() => {
-    smoother = ScrollSmoother.create({
-      wrapper: "#smooth-wrapper",
-      content: "#smooth-content",
-      smooth: 1.7,
-      speed: 1.7,
-      effects: true,
-      autoResize: true,
-      ignoreMobileResize: true,
-    });
+    const isDesktop = window.innerWidth > 1024;
+    const navLinks = Array.from(document.querySelectorAll(".header ul a")) as HTMLAnchorElement[];
+    const clickHandlers = new Map<HTMLAnchorElement, (e: Event) => void>();
 
-    smoother.scrollTop(0);
-    smoother.paused(true);
+    if (isDesktop) {
+      smoother = ScrollSmoother.create({
+        wrapper: "#smooth-wrapper",
+        content: "#smooth-content",
+        smooth: 1.7,
+        speed: 1.7,
+        effects: true,
+        autoResize: true,
+        ignoreMobileResize: true,
+      });
 
-    let links = document.querySelectorAll(".header ul a");
-    links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
-      element.addEventListener("click", (e) => {
-        if (window.innerWidth > 1024) {
+      smoother.scrollTop(0);
+      smoother.paused(true);
+    }
+
+    navLinks.forEach((element) => {
+      const onClick = (e: Event) => {
+        if (window.innerWidth > 1024 && smoother) {
           e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
+          const target = e.currentTarget as HTMLAnchorElement;
+          const section = target.getAttribute("data-href");
           smoother.scrollTo(section, true, "top top");
         }
+      };
+
+      clickHandlers.set(element, onClick);
+      element.addEventListener("click", onClick);
+    });
+
+    const onResize = () => {
+      if (window.innerWidth > 1024) {
+        ScrollSmoother.refresh(true);
+      }
+    };
+
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      navLinks.forEach((element) => {
+        const handler = clickHandlers.get(element);
+        if (handler) {
+          element.removeEventListener("click", handler);
+        }
       });
-    });
-    window.addEventListener("resize", () => {
-      ScrollSmoother.refresh(true);
-    });
+
+      window.removeEventListener("resize", onResize);
+
+      if (smoother) {
+        smoother.kill();
+        smoother = null;
+      }
+    };
   }, []);
   return (
     <>
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
           {profile.initials}
-        </a>
-        <a
-          href={links.linkedin}
-          className="navbar-connect"
-          data-cursor="disable"
-          target="_blank"
-          rel="noreferrer"
-        >
-          {links.linkedin.replace("https://", "")}
         </a>
         <ul>
           <li>
