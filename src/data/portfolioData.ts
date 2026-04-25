@@ -141,7 +141,7 @@ export const portfolioData = {
       tools: "Flask, NLP, Authentication, Resume Processing",
       image: "/images/resume-analyzer-ui.png",
       imagePosition: "50% 8%",
-      link: "https://github.com/raghavvxts",
+      link: "https://aianalysis-resume.vercel.app",
       demoLink: "https://aianalysis-resume.vercel.app",
       highlights: [
         "Developed an AI-powered web app to analyze resumes and provide personalized improvement suggestions",

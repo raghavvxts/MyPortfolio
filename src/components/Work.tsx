@@ -45,24 +45,6 @@ const Work = () => {
         )}
 
         <div className="carousel-wrapper">
-          {/* Navigation Arrows */}
-          <button
-            className="carousel-arrow carousel-arrow-left"
-            onClick={goToPrev}
-            aria-label="Previous project"
-            data-cursor="disable"
-          >
-            <MdArrowBack />
-          </button>
-          <button
-            className="carousel-arrow carousel-arrow-right"
-            onClick={goToNext}
-            aria-label="Next project"
-            data-cursor="disable"
-          >
-            <MdArrowForward />
-          </button>
-
           {/* Slides */}
           <div className="carousel-track-container">
             <div
@@ -78,13 +60,23 @@ const Work = () => {
                       <div className="carousel-number">
                         <h3>0{index + 1}</h3>
                       </div>
-                      <div className="carousel-details">
-                        <h4>{project.title}</h4>
-                        <p className="carousel-category">
-                          {project.category}
-                        </p>
+                      <div className="carousel-main">
+                        <div className="carousel-details">
+                          <h4>{project.title}</h4>
+                          <p className="carousel-category">{project.category}</p>
+                        </div>
+
+                        <div className="carousel-image-wrapper">
+                          <WorkImage
+                            image={project.image}
+                            alt={project.title}
+                            imagePosition={project.imagePosition}
+                            link={project.link}
+                          />
+                        </div>
+
                         <div className="carousel-tools">
-                          <span className="tools-label">Tools & Features</span>
+                          <span className="tools-label">Built With</span>
                           <p>{project.tools}</p>
                           {project.demoLink && (
                             <a
@@ -94,26 +86,11 @@ const Work = () => {
                               rel="noreferrer"
                               data-cursor="disable"
                             >
-                              Live Demo: {project.demoLink}
+                              Live Demo
                             </a>
-                          )}
-                          {project.highlights && (
-                            <ul>
-                              {project.highlights.map((point) => (
-                                <li key={point}>{point}</li>
-                              ))}
-                            </ul>
                           )}
                         </div>
                       </div>
-                    </div>
-                    <div className="carousel-image-wrapper">
-                      <WorkImage
-                        image={project.image}
-                        alt={project.title}
-                        imagePosition={project.imagePosition}
-                        link={project.link}
-                      />
                     </div>
                   </div>
                 </div>
@@ -121,37 +98,37 @@ const Work = () => {
             </div>
           </div>
 
-          {/* Dot Indicators */}
-          <div className="carousel-mobile-nav">
+          <div className="carousel-controls">
             <button
-              className="carousel-arrow carousel-arrow-mobile"
+              className="carousel-arrow"
               onClick={goToPrev}
               aria-label="Previous project"
               data-cursor="disable"
             >
               <MdArrowBack />
             </button>
+
+            <div className="carousel-dots">
+              {projects.map((_, index) => (
+                <button
+                  key={index}
+                  className={`carousel-dot ${index === currentIndex ? "carousel-dot-active" : ""
+                    }`}
+                  onClick={() => goToSlide(index)}
+                  aria-label={`Go to project ${index + 1}`}
+                  data-cursor="disable"
+                />
+              ))}
+            </div>
+
             <button
-              className="carousel-arrow carousel-arrow-mobile"
+              className="carousel-arrow"
               onClick={goToNext}
               aria-label="Next project"
               data-cursor="disable"
             >
               <MdArrowForward />
             </button>
-          </div>
-
-          <div className="carousel-dots">
-            {projects.map((_, index) => (
-              <button
-                key={index}
-                className={`carousel-dot ${index === currentIndex ? "carousel-dot-active" : ""
-                  }`}
-                onClick={() => goToSlide(index)}
-                aria-label={`Go to project ${index + 1}`}
-                data-cursor="disable"
-              />
-            ))}
           </div>
         </div>
       </div>
