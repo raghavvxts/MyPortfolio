@@ -3,6 +3,7 @@ import { MdArrowOutward } from "react-icons/md";
 
 interface Props {
   image: string;
+  imagePosition?: string;
   alt?: string;
   video?: string;
   link?: string;
@@ -20,6 +21,9 @@ const WorkImage = (props: Props) => {
 
   const fallbackImage = `${import.meta.env.BASE_URL}images/placeholder.webp`;
   const imageSrc = getAssetUrl(props.image) || fallbackImage;
+  const mediaStyle = props.imagePosition
+    ? { objectPosition: props.imagePosition }
+    : undefined;
 
   const handleMouseEnter = async () => {
     if (props.video) {
@@ -59,6 +63,7 @@ const WorkImage = (props: Props) => {
           alt={props.alt}
           loading="lazy"
           decoding="async"
+          style={mediaStyle}
           onError={(e) => {
             const target = e.currentTarget;
             if (!target.src.endsWith("/images/placeholder.webp")) {
@@ -66,7 +71,16 @@ const WorkImage = (props: Props) => {
             }
           }}
         />
-        {isVideo && <video src={video} autoPlay muted playsInline loop></video>}
+        {isVideo && (
+          <video
+            src={video}
+            autoPlay
+            muted
+            playsInline
+            loop
+            style={mediaStyle}
+          ></video>
+        )}
       </a>
     </div>
   );

@@ -10,6 +10,7 @@ export type ProjectItem = {
   category: string;
   tools: string;
   image: string;
+  imagePosition?: string;
   link: string;
   demoLink?: string;
   highlights?: string[];
@@ -139,6 +140,7 @@ export const portfolioData = {
       category: "Python, Flask, NLP, Database",
       tools: "Flask, NLP, Authentication, Resume Processing",
       image: "/images/resume-analyzer-ui.png",
+      imagePosition: "50% 8%",
       link: "https://github.com/raghavvxts",
       demoLink: "https://aianalysis-resume.vercel.app",
       highlights: [
@@ -154,6 +156,7 @@ export const portfolioData = {
       category: "IoT, AI Diagnostics, Dashboard",
       tools: "Sensor Integration, Monitoring Dashboard, Device Analytics",
       image: "/images/agrisense-ui.png",
+      imagePosition: "50% 0%",
       link: "https://github.com/raghavvxts",
       highlights: [
         "Built an AI-powered diagnostics workflow for agriculture-focused decision support",

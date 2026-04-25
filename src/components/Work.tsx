@@ -111,6 +111,7 @@ const Work = () => {
                       <WorkImage
                         image={project.image}
                         alt={project.title}
+                        imagePosition={project.imagePosition}
                         link={project.link}
                       />
                     </div>
@@ -121,6 +122,25 @@ const Work = () => {
           </div>
 
           {/* Dot Indicators */}
+          <div className="carousel-mobile-nav">
+            <button
+              className="carousel-arrow carousel-arrow-mobile"
+              onClick={goToPrev}
+              aria-label="Previous project"
+              data-cursor="disable"
+            >
+              <MdArrowBack />
+            </button>
+            <button
+              className="carousel-arrow carousel-arrow-mobile"
+              onClick={goToNext}
+              aria-label="Next project"
+              data-cursor="disable"
+            >
+              <MdArrowForward />
+            </button>
+          </div>
+
           <div className="carousel-dots">
             {projects.map((_, index) => (
               <button
